@@ -151,7 +151,7 @@ static void HacksComp_SetAll(struct HacksComp* hacks, cc_bool allowed) {
 	hacks->CanSpeed    = allowed; hacks->CanPushbackBlocks = allowed;
 
 	hacks->CanUseThirdPerson = allowed;
-	hacks->CanSeeAllNames    = allowed && hacks->IsOp;
+	hacks->CanSeeAllNames    = allowed;
 }
 
 void HacksComp_Init(struct HacksComp* hacks) {
@@ -164,7 +164,7 @@ void HacksComp_Init(struct HacksComp* hacks) {
 	hacks->CanDoubleJump  = true;
 	hacks->BaseHorSpeed   = 1.0f;
 	hacks->MaxHorSpeed    = 1.0f;
-	hacks->MaxJumps       = 1;
+	hacks->MaxJumps       = 2;
 	hacks->NoclipSlide    = true;
 	hacks->CanBePushed    = true;
 

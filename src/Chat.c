@@ -603,7 +603,7 @@ static void CuboidCommand_Execute(const cc_string* args, int argsCount) {
 
 static struct ChatCommand CuboidCommand = {
 	"Cuboid", CuboidCommand_Execute,
-	COMMAND_FLAG_SINGLEPLAYER_ONLY | COMMAND_FLAG_UNSPLIT_ARGS,
+	COMMAND_FLAG_UNSPLIT_ARGS,
 	{
 		"&a/client cuboid [block] [persist]",
 		"&eFills the 3D rectangle between two points with [block].",
@@ -638,7 +638,7 @@ static void TeleportCommand_Execute(const cc_string* args, int argsCount) {
 
 static struct ChatCommand TeleportCommand = {
 	"TP", TeleportCommand_Execute,
-	COMMAND_FLAG_SINGLEPLAYER_ONLY,
+	0,
 	{
 		"&a/client tp [x y z]",
 		"&eMoves you to the given coordinates.",
@@ -714,7 +714,7 @@ static void BlockEditCommand_Execute(const cc_string* args, int argsCount__) {
 
 static struct ChatCommand BlockEditCommand = {
 	"BlockEdit", BlockEditCommand_Execute,
-	COMMAND_FLAG_SINGLEPLAYER_ONLY | COMMAND_FLAG_UNSPLIT_ARGS,
+	COMMAND_FLAG_UNSPLIT_ARGS,
 	{
 		"&a/client blockedit [block] [property] [value]",
 		"&eEdits the given property of the given block",

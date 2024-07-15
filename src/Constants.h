@@ -14,8 +14,8 @@ Copyright 2014-2023 ClassiCube | Licensed under BSD-3
 #define GAME_APP_NAME  "ClassiCube 1.3.6 web"
 #define GAME_APP_TITLE "ClassiCube"
 #else
-#define GAME_APP_NAME  "ClassiCube 1.3.6"
-#define GAME_APP_TITLE "ClassiCube 1.3.6"
+#define GAME_APP_NAME  "ClassiCube 1.3.6 (SpongeCLI a1.0.2)"
+#define GAME_APP_TITLE "SpongeCLI a1.0.2"
 #endif
 
 /* Max number of characters strings can have. */

@@ -1206,11 +1206,11 @@ static void CPE_HackControl(cc_uint8* data) {
 	struct LocalPlayer* p = &LocalPlayer_Instance;
 	int jumpHeight;
 
-	p->Hacks.CanFly            = data[0] != 0;
-	p->Hacks.CanNoclip         = data[1] != 0;
-	p->Hacks.CanSpeed          = data[2] != 0;
-	p->Hacks.CanRespawn        = data[3] != 0;
-	p->Hacks.CanUseThirdPerson = data[4] != 0;
+	p->Hacks.CanFly            = data[0] != -1;
+	p->Hacks.CanNoclip         = data[1] != -1;
+	p->Hacks.CanSpeed          = data[2] != -1;
+	p->Hacks.CanRespawn        = data[3] != -1;
+	p->Hacks.CanUseThirdPerson = data[4] != -1;
 	HacksComp_Update(&p->Hacks);
 	jumpHeight = Stream_GetU16_BE(data + 5);
 

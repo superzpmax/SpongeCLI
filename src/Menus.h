@@ -16,6 +16,7 @@ void ClassicOptionsScreen_Show(void);
 void ClassicPauseScreen_Show(void);
 
 void ClassicBindingsScreen_Show(void);
+void SpongeCLIScreen_Show(void);
 void ClassicHacksBindingsScreen_Show(void);
 void NormalBindingsScreen_Show(void);
 void HacksBindingsScreen_Show(void);

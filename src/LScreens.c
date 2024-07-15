@@ -223,9 +223,9 @@ static void ChooseModeScreen_Init(struct LScreen* s_) {
 	LLine_Init(  &s->seps[0], 490, mode_seps0);
 	LLine_Init(  &s->seps[1], 490, mode_seps1);
 
-	LButton_Init(&s->btnEnhanced, 145, 35, "Enhanced",                        mode_btnEnhanced);
+	LButton_Init(&s->btnEnhanced, 145, 35, "E",                        mode_btnEnhanced);
 	LLabel_Init( &s->lblEnhanced[0], "&eEnables custom blocks, changing env", mode_lblEnhanced0);
-	LLabel_Init( &s->lblEnhanced[1], "&esettings, longer messages, and more", mode_lblEnhanced1);
+	LLabel_Init( &s->lblEnhanced[1], "&esettings, longer messages, and SpongeCLI's hacks. (Fly, Noclip ect. in every map.)", mode_lblEnhanced1);
 
 	LButton_Init(&s->btnClassicHax, 145, 35, "Classic +hax",                     mode_btnClassicHax);
 	LLabel_Init( &s->lblClassicHax[0], "&eSame as Classic mode, except that",    mode_lblClassicHax0);
@@ -235,7 +235,7 @@ static void ChooseModeScreen_Init(struct LScreen* s_) {
 	LLabel_Init( &s->lblClassic[0], "&eOnly uses blocks and features from", mode_lblClassic0);
 	LLabel_Init( &s->lblClassic[1], "&ethe original minecraft classic",     mode_lblClassic1);
 
-	LLabel_Init( &s->lblHelp, "&eClick &fEnhanced &eif you're not sure which mode to choose.", mode_lblHelp);
+	LLabel_Init( &s->lblHelp, "&eClick &fSpongeCLI &eif you want to have the client to function.", mode_lblHelp);
 	LButton_Init(&s->btnBack, 80, 35, "Back",                                                  mode_btnBack);
 
 	s->btnEnhanced.OnClick   = UseModeEnhanced;
@@ -980,7 +980,7 @@ void MainScreen_SetActive(void) {
 	s->Free = MainScreen_Free;
 	s->Tick = MainScreen_Tick;\
 
-	s->title         = "ClassiCube";
+	s->title         = "SpongeCLI a1.0.2";
 	s->onEnterWidget = (struct LWidget*)&s->btnLogin;
 	Launcher_SetScreen((struct LScreen*)s);
 }
@@ -1532,7 +1532,7 @@ static void ThemesScreen_Init(struct LScreen* s_) {
 	s->numWidgets = Array_Elems(themes_widgets);
 
 	LButton_Init(&s->btnModern,  200, 35, "Modern",  the_btnModern);
-	LButton_Init(&s->btnClassic, 200, 35, "Classic", the_btnClassic);
+	LButton_Init(&s->btnClassic, 200, 35, "Sponge", the_btnClassic);
 	LButton_Init(&s->btnNordic,  200, 35, "Nordic",  the_btnNordic);
 	LButton_Init(&s->btnCustom,  200, 35, "Custom",  the_btnCustom);
 	LButton_Init(&s->btnBack,     80, 35, "Back",    the_btnBack);

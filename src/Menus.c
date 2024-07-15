@@ -198,8 +198,11 @@ static PackedCol Menu_HexCol(const cc_string* str) {
 	return PackedCol_Make(rgb[0], rgb[1], rgb[2], 255);
 }
 
+static void SpongeCLIScreen_Show(void);
+
 static void Menu_SwitchOptions(void* a, void* b)        { OptionsGroupScreen_Show(); }
 static void Menu_SwitchPause(void* a, void* b)          { Gui_ShowPauseMenu(); }
+static void Menu_SwitchSponge(void* a, void* b)			{ SpongeCLIScreen_Show(); }
 static void Menu_SwitchClassicOptions(void* a, void* b) { ClassicOptionsScreen_Show(); }
 
 static void Menu_SwitchBindsClassic(void* a, void* b)      { ClassicBindingsScreen_Show(); }
@@ -215,6 +218,7 @@ static void Menu_SwitchChat(void* a, void* b)      { ChatOptionsScreen_Show(); }
 static void Menu_SwitchGui(void* a, void* b)       { GuiOptionsScreen_Show(); }
 static void Menu_SwitchGfx(void* a, void* b)       { GraphicsOptionsScreen_Show(); }
 static void Menu_SwitchHacks(void* a, void* b)     { HacksSettingsScreen_Show(); }
+static void Menu_SwitchConfig(void* a, void* b) { MiscOptionsScreen_Show(); }
 static void Menu_SwitchEnv(void* a, void* b)       { EnvSettingsScreen_Show(); }
 static void Menu_SwitchNostalgia(void* a, void* b) { NostalgiaMenuScreen_Show(); }
 
@@ -488,7 +492,7 @@ static void MenuScreen_Render2(void* screen, double delta) {
 /*########################################################################################################################*
 *-----------------------------------------------------PauseScreenBase-----------------------------------------------------*
 *#########################################################################################################################*/
-#define PAUSE_MAX_BTNS 6
+#define PAUSE_MAX_BTNS 7
 static struct PauseScreen {
 	Screen_Body
 	int descsCount;
@@ -525,6 +529,7 @@ static struct Widget* pause_widgets[] = {
 	(struct Widget*)&PauseScreen.btns[0], (struct Widget*)&PauseScreen.btns[1],
 	(struct Widget*)&PauseScreen.btns[2], (struct Widget*)&PauseScreen.btns[3],
 	(struct Widget*)&PauseScreen.btns[4], (struct Widget*)&PauseScreen.btns[5],
+	(struct Widget*)&PauseScreen.btns[6],
 	(struct Widget*)&PauseScreen.back,    (struct Widget*)&PauseScreen.quit
 };
 
@@ -563,7 +568,9 @@ static void PauseScreen_Init(void* screen) {
 		{  160,    0, "Load level...",          Menu_SwitchLoadLevel },
 		{  160,   50, "Save level...",          Menu_SwitchSaveLevel },
 		{ -160,    0, "Change texture pack...", Menu_SwitchTexPacks  },
-		{ -160,   50, "Hotkeys...",             Menu_SwitchHotkeys   }
+		{ -160,   50, "Hotkeys...",             Menu_SwitchHotkeys   },
+	    {    0,  100, "SpongeCLI",				Menu_SwitchSponge	 }
+
 	};
 	s->widgets     = pause_widgets;
 	s->numWidgets  = Array_Elems(pause_widgets);
@@ -673,6 +680,14 @@ static struct OptionsGroupScreen {
 	struct ButtonWidget done;	
 } OptionsGroupScreen;
 
+static struct SpongeCLIGroupScreen {
+	Screen_Body
+    struct FontDesc textFont;
+	struct ButtonWidget btns[2];
+	struct TextWidget desc;
+	struct ButtonWidget done;
+} SpongeCLIGroupScreen;
+
 static struct Widget* optGroups_widgets[] = {
 	(struct Widget*)&OptionsGroupScreen.btns[0], (struct Widget*)&OptionsGroupScreen.btns[1],
 	(struct Widget*)&OptionsGroupScreen.btns[2], (struct Widget*)&OptionsGroupScreen.btns[3],
@@ -680,7 +695,12 @@ static struct Widget* optGroups_widgets[] = {
 	(struct Widget*)&OptionsGroupScreen.btns[6], (struct Widget*)&OptionsGroupScreen.btns[7],
 	(struct Widget*)&OptionsGroupScreen.desc,    (struct Widget*)&OptionsGroupScreen.done
 };
+static struct Widget* spongeGroups_widgets[] = {
+	(struct Widget*)&SpongeCLIGroupScreen.btns[0], (struct Widget*)&SpongeCLIGroupScreen.btns[1],
+	(struct Widget*)&SpongeCLIGroupScreen.desc,    (struct Widget*)&SpongeCLIGroupScreen.done
+};
 #define OPTGROUPS_MAX_VERTICES (8 * BUTTONWIDGET_MAX + TEXTWIDGET_MAX + BUTTONWIDGET_MAX)
+#define SPOUNGE_MAX_VERTICES (2 * BUTTONWIDGET_MAX + TEXTWIDGET_MAX + BUTTONWIDGET_MAX)
 
 static const char* const optsGroup_descs[8] = {
 	"&eMusic/Sound, view bobbing, and more",
@@ -701,6 +721,16 @@ static const struct SimpleButtonDesc optsGroup_btns[8] = {
 	{  160,  -50, "Hacks settings...",    Menu_SwitchHacks       },
 	{  160,    0, "Env settings...",      Menu_SwitchEnv         },
 	{  160,   50, "Nostalgia options...", Menu_SwitchNostalgia   }
+};
+
+static const struct SimpleButtonDesc spongeGroup_btns[2] = {
+	{ -160, -100, "Configuration...",      Menu_SwitchConfig       },
+	{ -160,  -50, "Hacks...",              Menu_SwitchConfig       },
+};
+
+static const char* const spongeGroup_descs[2] = {
+	"&eSpongeCLI's configuration",
+	"&eList of hacks that you can turn on/off",
 };
 
 static void OptionsGroupScreen_CheckHacksAllowed(void* screen) {
@@ -788,6 +818,92 @@ void OptionsGroupScreen_Show(void) {
 	Gui_Add((struct Screen*)s, GUI_PRIORITY_MENU);
 }
 
+// ################################################ SpongeCLI
+static void SpongeCLIGroupScreen_CheckHacksAllowed(void* screen) {
+	struct SpongeCLIGroupScreen* s = (struct SpongeCLIGroupScreen*)screen;
+	Widget_SetDisabled(&s->btns[1],
+		!LocalPlayer_Instance.Hacks.CanAnyHacks); /* select texture pack */
+	s->dirty = true;
+}
+
+CC_NOINLINE static void SpongeCLIGroupScreen_UpdateDesc(struct SpongeCLIGroupScreen* s) {
+	TextWidget_SetConst(&s->desc, spongeGroup_descs[s->selectedI], &s->textFont);
+}
+
+static void SpongeCLIGroupScreen_ContextLost(void* screen) {
+	struct SpongeCLIGroupScreen* s = (struct SpongeCLIGroupScreen*)screen;
+	Font_Free(&s->textFont);
+	Screen_ContextLost(screen);
+}
+
+static void SpongeCLIGroupScreen_ContextRecreated(void* screen) {
+	struct SpongeCLIGroupScreen* s = (struct SpongeCLIGroupScreen*)screen;
+	struct FontDesc titleFont;
+	Screen_UpdateVb(screen);
+
+	Gui_MakeTitleFont(&titleFont);
+	Gui_MakeBodyFont(&s->textFont);
+
+	Menu_SetButtons(s->btns, &titleFont, spongeGroup_btns, 2);
+	ButtonWidget_SetConst(&s->done, "Done", &titleFont);
+
+	if (s->selectedI >= 0) SpongeCLIGroupScreen_UpdateDesc(s);
+	SpongeCLIGroupScreen_CheckHacksAllowed(s);
+	Font_Free(&titleFont);
+}
+
+static void SpongeCLIGroupScreen_Layout(void* screen) {
+	struct SpongeCLIGroupScreen* s = (struct SpongeCLIGroupScreen*)screen;
+	Menu_LayoutButtons(s->btns, spongeGroup_btns, 2);
+	Widget_SetLocation(&s->desc, ANCHOR_CENTRE, ANCHOR_CENTRE, 0, 100);
+	Menu_LayoutBack(&s->done);
+}
+
+static void SpongeCLIGroupScreen_Init(void* screen) {
+	struct SpongeCLIGroupScreen* s = (struct SpongeCLIGroupScreen*)screen;
+	Event_Register_(&UserEvents.HackPermsChanged, s, SpongeCLIGroupScreen_CheckHacksAllowed);
+
+	s->widgets = spongeGroups_widgets;
+	s->numWidgets = Array_Elems(spongeGroups_widgets);
+	s->selectedI = -1;
+	s->maxVertices = SPOUNGE_MAX_VERTICES;
+
+	Menu_InitButtons(s->btns, 300, spongeGroup_btns, 2);
+	TextWidget_Init(&s->desc);
+	ButtonWidget_Init(&s->done, 400, Menu_SwitchPause);
+}
+
+static void SpongeCLIGroupScreen_Free(void* screen) {
+	struct SpongeCLIGroupScreen* s = (struct SpongeCLIGroupScreen*)screen;
+	Event_Unregister_(&UserEvents.HackPermsChanged, s, SpongeCLIGroupScreen_CheckHacksAllowed);
+}
+
+static int SpongeCLIGroupScreen_PointerMove(void* screen, int id, int x, int y) {
+	struct SpongeCLIGroupScreen* s = (struct SpongeCLIGroupScreen*)screen;
+	int i = Menu_DoPointerMove(s, id, x, y);
+	if (i == -1 || i == s->selectedI) return true;
+	if (i >= Array_Elems(spongeGroup_descs)) return true;
+
+	s->selectedI = i;
+	SpongeCLIGroupScreen_UpdateDesc(s);
+	return true;
+}
+
+static const struct ScreenVTABLE SpongeCLIGroupScreen_VTABLE = {
+	SpongeCLIGroupScreen_Init,   Screen_NullUpdate, SpongeCLIGroupScreen_Free,
+	MenuScreen_Render2,        Screen_BuildMesh,
+	Menu_InputDown,            Screen_InputUp,    Screen_TKeyPress,               Screen_TText,
+	Menu_PointerDown,          Screen_PointerUp,  SpongeCLIGroupScreen_PointerMove, Screen_TMouseScroll,
+	SpongeCLIGroupScreen_Layout, SpongeCLIGroupScreen_ContextLost, SpongeCLIGroupScreen_ContextRecreated
+};
+
+void SpongeCLIScreen_Show(void) {
+	struct SpongeCLIGroupScreen* s = &SpongeCLIGroupScreen;
+	s->grabsInput = true;
+	s->closable = true;
+	s->VTABLE = &SpongeCLIGroupScreen_VTABLE;
+	Gui_Add((struct Screen*)s, GUI_PRIORITY_MENU);
+}
 
 /*########################################################################################################################*
 *----------------------------------------------------EditHotkeyScreen-----------------------------------------------------*

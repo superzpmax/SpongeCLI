@@ -87,20 +87,20 @@ static void HUDScreen_RemakeLine1(struct HUDScreen* s) {
 	if (!Gui.ShowFPS && s->line1.tex.ID) return;
 
 	fps = s->accumulator == 0 ? 1 : (int)(s->frames / s->accumulator);
-	String_Format1(&status, "%i fps, ", &fps);
+	String_Format1(&status, "&e %i &b fps, ", &fps);
 
 	if (Game_ClassicMode) {
-		String_Format1(&status, "%i chunk updates", &Game.ChunkUpdates);
+		String_Format1(&status, "&e %i &b chunk updates", &Game.ChunkUpdates);
 	} else {
 		if (Game.ChunkUpdates) {
-			String_Format1(&status, "%i chunks/s, ", &Game.ChunkUpdates);
+			String_Format1(&status, "&e %i &b chunks/s, ", &Game.ChunkUpdates);
 		}
 
 		indices = ICOUNT(Game_Vertices);
-		String_Format1(&status, "%i vertices", &indices);
+		String_Format1(&status, "&e %i &b vertices", &indices);
 
 		ping = Ping_AveragePingMS();
-		if (ping) String_Format1(&status, ", ping %i ms", &ping);
+		if (ping) String_Format1(&status, ", &bping &e %i &b ms", &ping);
 	}
 	TextWidget_Set(&s->line1, &status, &s->font);
 	s->dirty = true;
@@ -161,12 +161,12 @@ static void HUDScreen_RemakeLine2(struct HUDScreen* s) {
 
 	String_InitArray(status, statusBuffer);
 	if (Camera.Fov != Camera.DefaultFov) {
-		String_Format1(&status, "Zoom fov %i  ", &Camera.Fov);
+		String_Format1(&status, "&bZoom fov &e %i  ", &Camera.Fov);
 	}
 
-	if (hacks->Flying) String_AppendConst(&status, "Fly ON   ");
-	if (speed)         String_Format1(&status, "Speed %f1x   ", &speed);
-	if (hacks->Noclip) String_AppendConst(&status, "Noclip ON   ");
+	if (hacks->Flying) String_AppendConst(&status, "&bFly   ");
+	if (speed)         String_Format1(&status, "&bSpeed: &e %f1   ", &speed);
+	if (hacks->Noclip) String_AppendConst(&status, "&bNoclip   ");
 
 	TextWidget_Set(&s->line2, &status, &s->font);
 }
@@ -184,8 +184,8 @@ static void HUDScreen_ContextLost(void* screen) {
 }
 
 static void HUDScreen_ContextRecreated(void* screen) {	
-	static const cc_string chars  = String_FromConst("0123456789-, ()");
-	static const cc_string prefix = String_FromConst("Position: ");
+	static const cc_string chars  = String_FromConst("0123456789- ");
+	static const cc_string prefix = String_FromConst("&bXYZ&f: ");
 
 	struct HUDScreen* s = (struct HUDScreen*)screen;
 	Screen_UpdateVb(s);

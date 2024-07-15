@@ -301,11 +301,11 @@ void Launcher_Run(void) {
 struct LauncherTheme Launcher_Theme;
 const struct LauncherTheme Launcher_ModernTheme = {
 	false,
-	BitmapColor_RGB(153, 127, 172), /* background */
-	BitmapColor_RGB( 97,  81, 110), /* button border */
-	BitmapColor_RGB(189, 168, 206), /* active button */
-	BitmapColor_RGB(141, 114, 165), /* button foreground */
-	BitmapColor_RGB(162, 131, 186), /* button highlight */
+	BitmapColor_RGB(176, 153, 69), /* background */
+	BitmapColor_RGB(255, 224, 112), /* button border */
+	BitmapColor_RGB(255, 224, 112), /* active button */
+	BitmapColor_RGB(176, 153, 69), /* button foreground */
+	BitmapColor_RGB(255, 232, 145), /* button highlight */
 };
 const struct LauncherTheme Launcher_ClassicTheme = {
 	true,

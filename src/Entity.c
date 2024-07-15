@@ -928,7 +928,7 @@ static void LocalPlayer_Init(void) {
 	TiltComp_Init(&p->Tilt);
 
 	p->Base.ModelRestrictedScale = true;
-	p->ReachDistance = 5.0f;
+	p->ReachDistance = 128.0f;
 	p->Physics.Hacks = &p->Hacks;
 	p->Physics.Collisions = &p->Collisions;
 	p->Base.VTABLE   = &localPlayer_VTABLE;
